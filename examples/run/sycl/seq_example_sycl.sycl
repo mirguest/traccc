@@ -22,7 +22,7 @@
 #include "traccc/sycl/seeding/track_params_estimation.hpp"
 
 // performance
-#include "traccc/efficiency/seeding_performance_writer.hpp"
+// #include "traccc/efficiency/seeding_performance_writer.hpp"
 
 // options
 #include "traccc/options/full_tracking_input_options.hpp"
@@ -65,7 +65,8 @@ int seq_run(const traccc::full_tracking_input_config& i_cfg, bool run_cpu) {
     float tp_estimating_sycl(0);
 
     // Creating Sycl queue object
-    ::sycl::queue q(::sycl::gpu_selector{});
+    // ::sycl::queue q(::sycl::gpu_selector{});
+    ::sycl::queue q(::sycl::cpu_selector{});
     std::cout << "Running on device: "
               << q.get_device().get_info<::sycl::info::device::name>() << "\n";
 
@@ -83,10 +84,10 @@ int seq_run(const traccc::full_tracking_input_config& i_cfg, bool run_cpu) {
     traccc::sycl::track_params_estimation tp_sycl(shared_mr, &q);
 
     // performance writer
-    traccc::seeding_performance_writer sd_performance_writer(
-        traccc::seeding_performance_writer::config{});
-    sd_performance_writer.add_cache("CPU");
-    sd_performance_writer.add_cache("SYCL");
+    // traccc::seeding_performance_writer sd_performance_writer(
+    //     traccc::seeding_performance_writer::config{});
+    // sd_performance_writer.add_cache("CPU");
+    // sd_performance_writer.add_cache("SYCL");
 
     /*time*/ auto start_wall_time = std::chrono::system_clock::now();
 
@@ -237,16 +238,16 @@ int seq_run(const traccc::full_tracking_input_config& i_cfg, bool run_cpu) {
           ------------*/
 
         if (i_cfg.check_seeding_performance) {
-            traccc::event_map evt_map(event, i_cfg.detector_file,
-                                      i_cfg.hit_directory,
-                                      i_cfg.particle_directory, host_mr);
-            sd_performance_writer.write("SYCL", seeds_sycl,
-                                        spacepoints_per_event, evt_map);
+            // traccc::event_map evt_map(event, i_cfg.detector_file,
+            //                           i_cfg.hit_directory,
+            //                           i_cfg.particle_directory, host_mr);
+            // sd_performance_writer.write("SYCL", seeds_sycl,
+            //                             spacepoints_per_event, evt_map);
 
-            if (run_cpu) {
-                sd_performance_writer.write("CPU", seeds, spacepoints_per_event,
-                                            evt_map);
-            }
+            // if (run_cpu) {
+            //     sd_performance_writer.write("CPU", seeds, spacepoints_per_event,
+            //                                 evt_map);
+            // }
         }
 
         if (run_cpu) {
@@ -263,7 +264,7 @@ int seq_run(const traccc::full_tracking_input_config& i_cfg, bool run_cpu) {
 
     /*time*/ wall_time += time_wall_time.count();
 
-    sd_performance_writer.finalize();
+    // sd_performance_writer.finalize();
 
     std::cout << "==> Statistics ... " << std::endl;
     std::cout << "- read    " << n_spacepoints << " spacepoints from "

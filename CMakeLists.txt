@@ -173,7 +173,7 @@ if ( TRACCC_BUILD_EXAMPLES )
    # Find Boost.
    find_package( Boost REQUIRED COMPONENTS program_options)
    # Find ROOT.
-   find_package( ROOT COMPONENTS RIO Tree Hist )
+   # find_package( ROOT COMPONENTS RIO Tree Hist )
    add_subdirectory( examples )
 endif()
 
